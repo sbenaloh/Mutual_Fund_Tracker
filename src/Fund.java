@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.*;
 
 public class Fund extends Asset {
-    private Map<Stock, Double> holdings;
+    private Map<MyStock, Double> holdings;
     private double totalWorth;
 
     // POST: Constructs a new empty Fund object
@@ -35,14 +35,14 @@ public class Fund extends Asset {
             String stockCompany = input.next();
             double stockPrice = input.nextDouble();
             double quantity = input.nextDouble();
-            holdings.put(new Stock(stockTicker, stockCompany, stockPrice), quantity);
+            holdings.put(new MyStock(stockTicker, stockCompany, stockPrice), quantity);
             totalWorth += price * quantity;
         }
     }
 
     // POST: Prints the Fund's holdings in order of total worth (price * quantity) to the inputted PrintStream
     public void printHoldings(PrintStream output) {
-        Comparator<Stock> comparator = new percentTotalComparator();
+        Comparator<MyStock> comparator = new percentTotalComparator();
 
         holdings.keySet().stream()
                 .sorted(comparator)
@@ -52,8 +52,8 @@ public class Fund extends Asset {
                 .forEach(output::println);
     }
 
-    private class percentTotalComparator implements Comparator<Stock> {
-        public int compare(Stock x, Stock y){
+    private class percentTotalComparator implements Comparator<MyStock> {
+        public int compare(MyStock x, MyStock y){
             double xWorth = x.price * holdings.get(x);
             double yWorth = y.price * holdings.get(y);
             if (xWorth - yWorth > 0) {
