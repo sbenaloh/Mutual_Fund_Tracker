@@ -1,5 +1,8 @@
 /**
  * Created by Steven on 3/20/2016.
+ *
+ * This class keeps track of mutual fund data, such as the fund's ticker, the company that runs it, and the
+ * individual stocks that make up the fund, and their respective quantities.
  */
 
 import java.io.*;
@@ -9,16 +12,23 @@ public class Fund extends Asset {
     private Map<Stock, Double> holdings;
     private double totalWorth;
 
+    // POST: Constructs a new empty Fund object
     public Fund() {
-        holdings = new TreeMap<Stock, Double>();
-        totalWorth = 0;
+        this("", "", 0, new Scanner(""));
     }
 
+    // PRE : Inputted Scanner's contents are in standard format
+    //       Inputted String ticker, String company are not empty, price is non-negative, otherwise throws
+    //       IllegalArgumentException
+    // POST: Constructs a new Fund object with the inputted ticker, company, and price.  Reads the composition
+    //       of the fund from the inputted Scanner
     public Fund(String ticker, String company, double price, Scanner input) {
+        if (ticker.isEmpty() || company.isEmpty() || price < 0)
+            throw new IllegalArgumentException();
         this.ticker = ticker;
         this.company = company;
         this.price = price;
-        holdings = new TreeMap<Stock, Double>();
+        holdings = new TreeMap<>();
         totalWorth = 0;
         while (input.hasNext()){
             String stockTicker = input.next();
@@ -30,10 +40,9 @@ public class Fund extends Asset {
         }
     }
 
-    //Prints the holdings in order of percentage in the fund
+    // POST: Prints the Fund's holdings in order of total worth (price * quantity) to the inputted PrintStream
     public void printHoldings(PrintStream output) {
         Comparator<Stock> comparator = new percentTotalComparator();
-        //PriorityQueue<Stock> inOrder = new PriorityQueue<Stock>(comparator);
 
         holdings.keySet().stream()
                 .sorted(comparator)
