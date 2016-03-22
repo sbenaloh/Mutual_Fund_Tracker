@@ -1,0 +1,3 @@
+MSFT Microsoft 18.0 100
+APPL Apple 22.5 92
+JHNS Johnson&Johnson 15.25 500
