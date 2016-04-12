@@ -8,10 +8,39 @@ import yahoofinance.quotes.stock.StockQuote;
 
 import java.io.*;
 import java.util.*;
-import java.math.*;
+import java.net.*;
 
 public class TestingMain {
-    public static void main(String[] args) throws FileNotFoundException, InterruptedException {
+    public static void main(String[] args) throws FileNotFoundException, InterruptedException, IOException {
+        //printMultiple();
+        readFundData();
+    }
+
+    private static void readFundData() throws IOException {
+        Scanner dataFile = new Scanner(new URL("https://www.sec.gov/Archives/edgar/data/1084380/000093041316006085/0000930413-16-006085.txt").openStream());
+        Scanner console = new Scanner(System.in);
+        String cont = "Y";
+
+        while (!cont.equals("n")) {
+            System.out.print("Read next? ");
+            cont = console.nextLine();
+            if (dataFile.hasNext()) {
+                System.out.println(dataFile.next());
+            } else {
+                System.out.println("Data file empty");
+            }
+        }
+    }
+
+    private static StockQuote getStockQuote(Stock s) {
+        try {
+            return s.getQuote(true);
+        } catch (IOException e) {
+            return new StockQuote("");
+        }
+    }
+
+    private static void printMultiple() throws FileNotFoundException, InterruptedException {
         try {
             Stock s2 = YahooFinance.get("^IXIC");
             File testFile = new File("testFile.txt");
@@ -27,18 +56,10 @@ public class TestingMain {
                         .map(TestingMain::getStockQuote)
                         .map(StockQuote::getPrice)
                         .forEach(testStream::println);
-                Thread.sleep(5000);
+                if (i < 2) Thread.sleep(5000);
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private static StockQuote getStockQuote(Stock s) {
-        try {
-            return s.getQuote(true);
-        } catch (IOException e) {
-            return new StockQuote("");
         }
     }
 }
